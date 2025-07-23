@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Rider, Driver, Ride, RiderRating, DriverRating
+# from django.contrib.auth.hashers import check_password
+# from rest_framework.authtoken.models import Token
 
 
 class LoginSerializer(serializers.Serializer):
@@ -10,16 +12,31 @@ class LoginSerializer(serializers.Serializer):
         email = data.get('email')
         password = data.get('password')
 
-        rider = Rider.objects.filter(email=email).first()
-        if rider and rider.password == password:
+        # Try to find user in Rider
+        rider = Rider.objects.filter(email=email, password=password).first()
+        if rider:
             return {"user_type": "rider", "user": rider}
 
-        driver = Driver.objects.filter(email=email).first()
-        if driver and driver.password == password:
+        # Try to find user in Driver
+        driver = Driver.objects.filter(email=email, password=password).first()
+        if driver:
             return {"user_type": "driver", "user": driver}
 
         raise serializers.ValidationError("Invalid email or password")
 
+    def create(self, validated_data):
+        return validated_data
+
+    def to_representation(self, instance):
+        return {
+            "message": "Login successful",
+            "user_type": instance["user_type"],
+            "user_id": instance["user"].id,
+            "redirect": "/rides/"
+        }
+
+
+        
 class RiderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rider

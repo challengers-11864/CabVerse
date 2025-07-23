@@ -7,6 +7,7 @@ from .views import (
 )
 
 router = DefaultRouter()
+# router.register('login',LoginView)
 router.register('riders', RiderViewSet)
 router.register('drivers', DriverViewSet)
 router.register('rides', RideViewSet, basename='ride')
