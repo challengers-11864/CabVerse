@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    RiderViewSet, DriverViewSet, RideViewSet,
+    LoginView,RiderViewSet, DriverViewSet, RideViewSet,
     CancelRideView, AcceptRideView, RejectRideView, UpdateRideStatusView,
     RiderRatingViewSet, DriverRatingViewSet
 )
@@ -17,6 +17,7 @@ router.register('driver-ratings', DriverRatingViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+     path('login/', LoginView.as_view(), name='login'),
     path('rides/<int:pk>/cancel/', CancelRideView.as_view(), name='cancel_ride'),
     path('rides/<int:pk>/accept/', AcceptRideView.as_view(), name='accept_ride'),
     path('rides/<int:pk>/reject/', RejectRideView.as_view(), name='reject_ride'),

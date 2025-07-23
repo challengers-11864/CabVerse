@@ -1,10 +1,28 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Rider, Driver, Ride, RiderRating, DriverRating
-from .serializers import RiderSerializer, DriverSerializer, RideSerializer, RiderRatingSerializer, DriverRatingSerializer
+from .serializers import LoginSerializer,RiderSerializer, DriverSerializer, RideSerializer, RiderRatingSerializer, DriverRatingSerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import CreateAPIView
+
+
+
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user_data = serializer.validated_data
+            user = user_data["user"]
+            user_type = user_data["user_type"]
+            return Response({
+                "message": "Login successful",
+                "user_type": user_type,
+                "user_id": user.id,
+                "redirect": "/rides/"  # You can use this on frontend
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class RiderViewSet(viewsets.ModelViewSet):
     queryset = Rider.objects.all()

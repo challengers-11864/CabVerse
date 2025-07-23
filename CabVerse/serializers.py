@@ -1,6 +1,25 @@
 from rest_framework import serializers
 from .models import Rider, Driver, Ride, RiderRating, DriverRating
 
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
+        rider = Rider.objects.filter(email=email).first()
+        if rider and rider.password == password:
+            return {"user_type": "rider", "user": rider}
+
+        driver = Driver.objects.filter(email=email).first()
+        if driver and driver.password == password:
+            return {"user_type": "driver", "user": driver}
+
+        raise serializers.ValidationError("Invalid email or password")
+
 class RiderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rider
